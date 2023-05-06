@@ -22,10 +22,37 @@ router.get("/users/:id", async (req, res) => {
   }
 });
 
-router.post("/users", async (req, res) => {});
+router.post("/users", async (req, res) => {
+  const { username, bio } = req.body;
 
-router.put("/users/:id", async (req, res) => {});
+  const user = await UserRepo.insert(username, bio);
 
-router.delete("/users/:id", async (req, res) => {});
+  res.send(user);
+});
+
+router.put("/users/:id", async (req, res) => {
+  const { id } = req.params;
+  const { username, bio } = req.body;
+
+  const updatedUser = await UserRepo.update(id, username, bio);
+
+  if (updatedUser) {
+    res.send(updatedUser);
+  } else {
+    res.sendStatus(404);
+  }
+});
+
+router.delete("/users/:id", async (req, res) => {
+  const { id } = req.params;
+
+  const user = await UserRepo.delete(id);
+
+  if (user) {
+    res.status(200).json({ message: `user with id ${id} is deleted` });
+  } else {
+    res.sendStatus(404);
+  }
+});
 
 module.exports = router;
